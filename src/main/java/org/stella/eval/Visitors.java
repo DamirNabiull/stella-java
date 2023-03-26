@@ -46,23 +46,25 @@ public class Visitors {
 //            System.out.println("\nFun - DeclVisitor " + p.stellaident_);
 
             DefinedType funcType = new DefinedType(TypesEnum.Fun);
+            Context context = new Context(arg);
 
             for (org.syntax.stella.Absyn.Annotation x: p.listannotation_) {
-                x.accept(new AnnotationVisitor(), arg);
+                x.accept(new AnnotationVisitor(), context);
             }
             //p.stellaident_;
             for (org.syntax.stella.Absyn.ParamDecl x: p.listparamdecl_) {
-                funcType.arg = x.accept(new ParamDeclVisitor(), arg);
+                funcType.arg = x.accept(new ParamDeclVisitor(), context);
             }
-            funcType.result = p.returntype_.accept(new ReturnTypeVisitor(), arg);
-            p.throwtype_.accept(new ThrowTypeVisitor(), arg);
+            funcType.result = p.returntype_.accept(new ReturnTypeVisitor(), context);
+            p.throwtype_.accept(new ThrowTypeVisitor(), context);
             for (org.syntax.stella.Absyn.Decl x: p.listdecl_) {
-                x.accept(new DeclVisitor(), arg);
+                x.accept(new DeclVisitor(), context);
             }
-            var body = p.expr_.accept(new ExprVisitor(), arg);
+            var body = p.expr_.accept(new ExprVisitor(), context);
+
+//            System.out.println(context);
 
             // Clear context
-            arg.LocalContext.clear();
             arg.LocalDefinitions.clear();
 
             funcType.result.equals(body, "FunDecl [" + p.stellaident_ + "]");
@@ -211,11 +213,14 @@ public class Visitors {
 //            System.out.println("Abstraction");
 
             var abstractFunc = new DefinedType(TypesEnum.Fun);
+            Context context = new Context(arg);
 
             for (org.syntax.stella.Absyn.ParamDecl x: p.listparamdecl_) {
-                abstractFunc.arg = x.accept(new ParamDeclVisitor(), arg);
+                abstractFunc.arg = x.accept(new ParamDeclVisitor(), context);
             }
-            abstractFunc.result = p.expr_.accept(new ExprVisitor(), arg);
+            abstractFunc.result = p.expr_.accept(new ExprVisitor(), context);
+
+//            System.out.println(context);
 
             return abstractFunc;
         }

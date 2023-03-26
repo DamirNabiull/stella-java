@@ -11,13 +11,18 @@ public class Context {
 
     public HashMap<String, DefinedType> LocalDefinitions;
 
-    public Stack<DefinedType> LocalContext;
-
     public Context()
     {
-        GlobalDefinitions = new HashMap<String, DefinedType>();
-        LocalDefinitions = new HashMap<String, DefinedType>();
-        LocalContext = new Stack<DefinedType>();
+        GlobalDefinitions = new HashMap<>();
+        LocalDefinitions = new HashMap<>();
+    }
+
+    public Context(Context context)
+    {
+        GlobalDefinitions = new HashMap<>(context.GlobalDefinitions);
+        GlobalDefinitions.putAll(context.LocalDefinitions);
+
+        LocalDefinitions = new HashMap<>();
     }
 
     public DefinedType LookUp(String name) throws Exception {
@@ -30,4 +35,20 @@ public class Context {
         throw new Exception(String.format("Not found declared %s", name));
     }
 
+    @Override
+    public String toString() {
+        String ans = "Global:\n";
+
+        for (String key : GlobalDefinitions.keySet()) {
+            ans += key + " : " + GlobalDefinitions.get(key);
+        }
+
+        ans += "\nLocal:\n";
+
+        for (String key : LocalDefinitions.keySet()) {
+            ans += key + " : " + LocalDefinitions.get(key);
+        }
+
+        return ans;
+    }
 }
